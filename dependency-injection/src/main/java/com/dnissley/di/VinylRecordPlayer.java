@@ -1,21 +1,23 @@
 package com.dnissley.di;
 
 import java.io.OutputStream;
+import java.io.IOException;
 
 public class VinylRecordPlayer {
   private VinylRecord record;
+  private OutputStream speaker;
 
-  public VinylRecordPlayer(VinylRecord record) {
+  public VinylRecordPlayer(VinylRecord record, OutputStream speaker) {
     this.record = record;
-    play(System.out);
+    this.speaker = speaker;
   }
 
-  public void play(OutputStream stream) {
+  public void play() {
     try {
-      stream.write(record.readSurface().getBytes());
+      speaker.write(record.readSurface().getBytes());
     }
-    catch (java.io.IOException e) {
-      // silence
+    catch (IOException e) {
+      // silence...
     }
   }
 }
