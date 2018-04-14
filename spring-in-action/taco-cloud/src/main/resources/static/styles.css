@@ -1,0 +1,8 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ingredient-group {
+  flex: 0 1 50%;
+}
