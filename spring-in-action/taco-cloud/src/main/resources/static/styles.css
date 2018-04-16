@@ -6,3 +6,7 @@
 .ingredient-group {
   flex: 0 1 50%;
 }
+
+.validationError {
+  color: red;
+}
