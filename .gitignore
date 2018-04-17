@@ -27,4 +27,11 @@ dist/
 nbdist/
 .nb-gradle/
 
+### Maven ###
+.mvn
+mvnw
+mvnw.cmd
+
+### Mac ###
 .DS_Store
+
