@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +14,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.CreditCardNumber;
@@ -29,20 +31,23 @@ public class Order {
   @GeneratedValue(strategy=GenerationType.AUTO)
   private Long id;
 
-  private Date placedAt;
-
+  @Column(name="deliveryName")
   @NotBlank(message="Name is required")
   private String name;
 
+  @Column(name="deliveryStreet")
   @NotBlank(message="Street is required")
   private String street;
 
+  @Column(name="deliveryCity")
   @NotBlank(message="City is required")
   private String city;
 
+  @Column(name="deliveryState")
   @NotBlank(message="State is required")
   private String state;
 
+  @Column(name="deliveryZip")
   @NotBlank(message="Zip code is required")
   private String zip;
 
@@ -55,6 +60,9 @@ public class Order {
 
   @Digits(integer=3, fraction=0, message="Invalid CVV")
   private String ccCVV;
+
+  @NotNull
+  private Date placedAt;
 
   @ManyToMany(targetEntity=Taco.class)
   private List<Taco> tacos = new ArrayList<>();

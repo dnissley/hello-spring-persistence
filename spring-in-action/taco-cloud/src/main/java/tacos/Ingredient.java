@@ -1,7 +1,10 @@
 package tacos;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -16,7 +19,12 @@ public class Ingredient {
 
   @Id
   private final String id;
+
+  @NotNull
   private final String name;
+
+  @NotNull
+  @Enumerated(EnumType.STRING)
   private final Type type;
 
   public static enum Type {
