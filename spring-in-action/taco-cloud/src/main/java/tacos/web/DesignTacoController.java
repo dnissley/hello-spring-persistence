@@ -2,7 +2,9 @@ package tacos.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -10,12 +12,14 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,24 +62,33 @@ public class DesignTacoController {
     List<Ingredient> ingredients = new ArrayList<>();
     ingredientRepo.findAll().forEach(i -> ingredients.add(i));
 
+    if (!model.containsAttribute("design")) {
+      model.addAttribute("design", new Taco());
+    }
+    else {
+      Taco design = (Taco) model.asMap().get("design");
+      markIngredientsSelected(ingredients, design.getIngredients());
+    }
+
     Type[] types = Ingredient.Type.values();
     for (Type type : types) {
       model.addAttribute(type.toString().toLowerCase(), 
         filterByType(ingredients, type));
     }
 
-    model.addAttribute("design", new Taco());
-
     return "design";
   }
 
   @PostMapping
   public String processDesign(
-      @Valid Taco design, Errors errors, 
+      RedirectAttributes redirectAttributes, 
+      @Valid Taco design, BindingResult bindingResult,
       @ModelAttribute Order order) {
     
-    if (errors.hasErrors()) {
-      return "design";
+    if (bindingResult.hasErrors()) {
+      redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.design", bindingResult);
+      redirectAttributes.addFlashAttribute("design", design);
+      return "redirect:/design";
     }
 
     Taco saved = designRepo.save(design);
@@ -84,9 +97,18 @@ public class DesignTacoController {
     return "redirect:/orders/current";
   }
 
-  public static List<Ingredient> filterByType(List<Ingredient> allIngredients, Type targetType) {
+  private static List<Ingredient> filterByType(List<Ingredient> allIngredients, Type targetType) {
     return allIngredients.stream()
       .filter(ingredient -> targetType.equals(ingredient.getType()))
       .collect(Collectors.toList());
+  }
+
+  private static void markIngredientsSelected(List<Ingredient> allIngredients, List<Ingredient> selectedIngredientList) {
+    if (allIngredients == null || selectedIngredientList == null) {
+      return;
+    }
+    List<String> selectedIngredientIdList = selectedIngredientList.stream().map(ingredient -> ingredient.getId()).collect(Collectors.toList());
+    Set<String> selectedIngredientIds = new HashSet<>(selectedIngredientIdList);
+    allIngredients.forEach(ingredient -> ingredient.setSelected(selectedIngredientIds.contains(ingredient.getId())));
   }
 }

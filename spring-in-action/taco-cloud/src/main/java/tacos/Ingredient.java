@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
@@ -26,6 +27,9 @@ public class Ingredient {
   @NotNull
   @Enumerated(EnumType.STRING)
   private final Type type;
+
+  @Transient
+  private boolean selected = false;
 
   public static enum Type {
     WRAP, PROTEIN, VEGGIES, CHEESE, SAUCE
