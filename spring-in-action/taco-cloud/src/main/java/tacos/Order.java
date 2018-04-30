@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -28,7 +30,7 @@ public class Order {
   private static final long serialVersionUID = 1L;
   
   @Id
-  @GeneratedValue(strategy=GenerationType.AUTO)
+  @GeneratedValue(strategy=GenerationType.IDENTITY)
   private Long id;
 
   @Column(name="deliveryName")
@@ -65,6 +67,10 @@ public class Order {
   private Date placedAt;
 
   @ManyToMany(targetEntity=Taco.class)
+  @JoinTable(name="Taco_Order_Tacos",
+    joinColumns = @JoinColumn(name="order_id", referencedColumnName="id"),
+    inverseJoinColumns = @JoinColumn(name="taco_id", referencedColumnName="id")
+  )
   private List<Taco> tacos = new ArrayList<>();
 
   public void addDesign(Taco design) {
